@@ -1,0 +1,240 @@
+In C++, a priority queue by default gives you the largest element first (max-heap). So for decreasing order access, you actually don’t need to change anything ✅
+
+✅ Default (Decreasing Order / Max-Heap)
+#include <iostream>
+#include <queue>
+using namespace std;
+
+int main() {
+    priority_queue<int> pq;  // max-heap (largest first)
+
+    pq.push(10);
+    pq.push(5);
+    pq.push(20);
+
+    while (!pq.empty()) {
+        cout << pq.top() << " ";
+        pq.pop();
+    }
+}
+🔹 Output:
+20 10 5
+
+👉 This is already decreasing order.
+
+🔁 If you meant Increasing Order (Min-Heap)
+
+Sometimes people confuse this — if you want smallest first, then you write:
+
+priority_queue<int, vector<int>, greater<int>> pq;
+🧠 Custom Comparator (Advanced)
+
+If you want custom decreasing logic (like for pairs):
+
+priority_queue<pair<int,int>> pq;
+
+By default:
+
+First element is compared first
+Then second if needed
+🎯 Summary
+priority_queue<int> → max-heap → decreasing order ✅
+priority_queue<int, vector<int>, greater<int>> → min-heap → increasing order
+
+we can also show:
+
+Priority queue for pairs
+Custom sorting using struct / lambda
+
+
+priority_queue in C++ can store duplicates.
+
+🔹 Example
+#include <iostream>
+#include <queue>
+using namespace std;
+
+int main() {
+    priority_queue<int> pq;
+
+    pq.push(10);
+    pq.push(5);
+    pq.push(10);  // duplicate
+    pq.push(20);
+
+    while (!pq.empty()) {
+        cout << pq.top() << " ";
+        pq.pop();
+    }
+}
+🔹 Output:
+20 10 10 5
+
+👉 You can see:
+
+10 appears twice
+So duplicates are allowed and preserved
+🧠 Key Points
+priority_queue is based on a heap
+It does NOT remove duplicates
+Every push() inserts a new element, even if it's the same value
+❗ Difference from set
+Container	Duplicates
+priority_queue	✅ Allowed
+set	❌ Not allowed
+multiset	✅ Allowed
+
+
+You cannot directly access the k-th element in a priority_queue like pq[k].
+
+A priority_queue only allows:
+
+top() → gives highest priority element
+push()
+pop()
+✅ Method 1: Pop k times (Simple way)
+
+If you want the k-th largest element (for max-heap):
+
+int kthElement(priority_queue<int> pq, int k) {
+    while (k > 1) {
+        pq.pop();
+        k--;
+    }
+    return pq.top();
+}
+🔹 Important:
+Pass by value → original queue stays safe
+Time Complexity: O(k log n)
+✅ Method 2: Use Min-Heap (Best approach)
+
+Efficient way for k-th largest element:
+
+int kthLargest(vector<int>& arr, int k) {
+    priority_queue<int, vector<int>, greater<int>> pq;
+
+    for (int x : arr) {
+        pq.push(x);
+        if (pq.size() > k) {
+            pq.pop();
+        }
+    }
+    return pq.top();
+}
+💡 Logic:
+Maintain heap of size k
+Top = k-th largest
+⏱ Complexity:
+O(n log k) → very efficient
+🔁 For k-th smallest
+
+Just use max-heap of size k:
+
+priority_queue<int> pq;
+🧠 Key Insight
+
+priority_queue is not like an array:
+
+❌ No indexing
+❌ No random access
+✅ Only top element is accessible
+🎯 Summary
+Direct k-th access → ❌ Not possible
+Pop k times → ✅ Simple
+Heap of size k → ✅ Best approach
+
+If you want, I can also show:
+
+k-th largest in a stream (real-time data)
+k-th element using quickselect (O(n)) 🚀
+k-th element using quickselect (O(n))
+
+Great choice 🚀 — Quickselect is one of the most important algorithms for interviews.
+
+It finds the k-th smallest or largest element in average O(n) time.
+
+🔥 Idea of Quickselect
+
+It is based on QuickSort:
+
+Pick a pivot
+Partition array:
+Left → smaller elements
+Right → larger elements
+Only recurse into the side where the k-th element lies (not both sides!)
+
+👉 That’s why it becomes O(n) on average.
+
+✅ Code: k-th Smallest Element
+#include <bits/stdc++.h>
+using namespace std;
+
+int partition(vector<int>& arr, int low, int high) {
+    int pivot = arr[high];
+    int i = low;
+
+    for (int j = low; j < high; j++) {
+        if (arr[j] < pivot) {
+            swap(arr[i], arr[j]);
+            i++;
+        }
+    }
+    swap(arr[i], arr[high]);
+    return i;
+}
+
+int quickSelect(vector<int>& arr, int low, int high, int k) {
+    if (low <= high) {
+        int p = partition(arr, low, high);
+
+        if (p == k) return arr[p];
+        else if (p > k)
+            return quickSelect(arr, low, p - 1, k);
+        else
+            return quickSelect(arr, p + 1, high, k);
+    }
+    return -1;
+}
+
+int main() {
+    vector<int> arr = {7, 10, 4, 3, 20, 15};
+    int k = 2; // 0-based index → 3rd smallest
+
+    cout << quickSelect(arr, 0, arr.size() - 1, k);
+}
+🔁 k-th Largest Element
+
+Just convert:
+
+int kLargest = n - k;
+
+Example:
+
+int k = 2; // 2nd largest
+int ans = quickSelect(arr, 0, n-1, n-k);
+🧠 Dry Run (Important)
+
+Array: [7, 10, 4, 3, 20, 15]
+Sorted: [3, 4, 7, 10, 15, 20]
+
+k = 2 (0-based) → answer = 7
+⏱ Complexity
+Case	Time Complexity
+Average	✅ O(n)
+Worst Case	❌ O(n²)
+
+👉 Worst case happens when pivot is always bad (like sorted array)
+
+⚡ Optimization (Important for Interviews)
+
+Use random pivot to avoid worst case:
+
+int randomIndex = low + rand() % (high - low + 1);
+swap(arr[randomIndex], arr[high]);
+
+
+🎯 Summary
+Quickselect = optimized version of Quicksort
+Finds k-th element without full sorting
+Average time → O(n) (better than heap in many cases)
+Works in-place (no extra space)

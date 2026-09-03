@@ -1,0 +1,8 @@
+// in BST - left<node<right, also node != left and node!=right
+// in left all nodes are less than root node and
+// in right all nodes are greater than root node
+// also entire left subtree should also be BST
+// also entire right subtree should also be BST
+// ideally duplicates not allowed in BST but if you allowe then there is clightly change in condition like left<= node<right
+// and generatlly height of BST is (log N)(base 2)
+// it is not necessity but in almost all the cases height is always (log N)(base 2)

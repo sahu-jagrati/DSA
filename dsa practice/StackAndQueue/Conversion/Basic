@@ -1,0 +1,47 @@
+What is an operator? Opeartors are like *(multiply),/(division),+(addition),-(subtraction),^(power), these are arithmetic Opeartors
+
+
+What is operands? Operands like A-Z, a-z, and the numbers from 0-9. These are we used for arithmetic expressions.
+
+Priority Order of Operators - 
+^  has maximum Priority 
+* and / have same priority but less than ^
++ and - have same priority but less than above one
+and else have less priority then aboveone 
+
+
+Now we discuss about What is infix, prefix,postfix?
+So whenever we write mathematical expression, we have to write it in a certain way. 
+
+Now the most generic way that we follow is : (p+q)*(m-n) and that is the most generic way to write it. And this is nothing but infix expression. Infix as the name has something as in. If we see all the operatos: +,*,-, everything is in between two operands. Thereby this can be termed as infix mathematical expression or infix arithmetic expression.
+
+Prefix: As the name is recommending pre, pre all the operators will be pre. So over here we have *,+,- before the operands like we have : * + pq - mn this is prefix expression
+
+Postfix: Again the name recommends we have  operators in post means later after operands like we have: pq + mn - *.
+
+
+Infix is heavily used in most of the programming languages like C++,Java, and other programming languages.
+
+Postfix: is used in stackbased calculators.
+
+Prefix: is used in a programming languge extensively which is known as a list, also used in tree data structure
+
+But the most common one is infix.
+
+
+What is an infix expression?
+The traditional way of writing mathematical expressions is called infix expressions, where the operator is placed between two operands (e.g., A + B, (A * B) / Q).
+Infix expressions are easy for humans to understand, but computers find them difficult to parse because they require knowledge of operator precedence, associativity rules, and parentheses.
+To make it easier for computers, we use postfix and prefix notations.
+
+
+What is a postfix expression?
+A postfix expression has the operator placed after the operands (e.g., PQ-C/). It is written as .
+In postfix expressions, the precedence of operators is determined by the order in which they appear in the expression. The operator that appears first is applied to the operands.
+Postfix expressions do not require parentheses, making them easier for computers to evaluate.
+
+What is a Prefix Expression?
+In a prefix expression, the operator is placed before the operands.
+The expression is in the form .
+Prefix expressions work similarly to postfix expressions. While evaluating, operators are applied immediately to the operands on the right of the operator.
+Prefix expressions are also called Polish notation.

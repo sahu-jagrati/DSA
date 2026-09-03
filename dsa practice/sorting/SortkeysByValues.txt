@@ -1,0 +1,75 @@
+If you want to sort keys according to their values, the best data structure depends on what you need.
+
+1. vector<pair<Key, Value>> (Most common)
+
+If you just need the sorted result once, store the map entries in a vector and sort it.
+
+unordered_map<string, int> mp = {
+    {"A", 5},
+    {"B", 2},
+    {"C", 8}
+};
+
+vector<pair<string, int>> v(mp.begin(), mp.end());
+
+sort(v.begin(), v.end(), [](auto &a, auto &b) {
+    return a.second < b.second;   // sort by value
+});
+
+for (auto &p : v) {
+    cout << p.first << " " << p.second << endl;
+}
+
+Output
+
+B 2
+A 5
+C 8
+
+Time Complexity: O(n log n)
+
+2. set<pair<Value, Key>>
+
+If you want the elements to always remain sorted by value, use a set.
+
+set<pair<int, string>> st;
+
+st.insert({5, "A"});
+st.insert({2, "B"});
+st.insert({8, "C"});
+
+for (auto &p : st) {
+    cout << p.second << " " << p.first << endl;
+}
+
+Output:
+
+B 2
+A 5
+C 8
+
+Here the set is sorted by the first element (value), then by the second (key) if values are equal.
+
+3. multimap<Value, Key>
+
+If multiple keys can have the same value, a multimap is a good choice.
+
+multimap<int, string> mm;
+
+mm.insert({5, "A"});
+mm.insert({2, "B"});
+mm.insert({5, "C"});
+
+for (auto &p : mm) {
+    cout << p.second << " " << p.first << endl;
+}
+
+Output:
+
+B 2
+A 5
+C 5
+Which one should you use?
+Sort once after building the map → vector<pair<Key, Value>> + sort() ✅ (recommended)
+Need automatic sorted order while inserting/removing → set<pair<Value, Key>>
+Duplicate values and automatic sorting → multimap<Value, Key>

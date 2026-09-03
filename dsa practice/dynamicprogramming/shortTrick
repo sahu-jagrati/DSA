@@ -1,0 +1,7 @@
+trick to solve all dp problem
+
+1. Try to represent the problem in terms of an index.
+2. Do all possible stuffs on that index according to the problem statement
+3. Sum of all stuffs if you have to count all ways
+or get min(of all stuffs) if you have to find minimum
+or get max(of all stuffs) if you have to find maximum

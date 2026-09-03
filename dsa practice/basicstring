@@ -1,0 +1,116 @@
+we make hasharray for 26 alphabets character having size=26 then is this correct hash[s[j]]=hash[s[j]-'a']
+
+Short answer: Nope, that’s not correct 🙂
+If your hash array size is 26, you must use s[j] - 'a'.
+
+Why?
+
+You made something like this:
+
+vector<int> hash(26, 0);
+
+
+This means valid indices are:
+
+0 to 25
+
+
+But s[j] is a character, like:
+
+'a' → ASCII 97
+'b' → ASCII 98
+...
+
+
+So if you do:
+
+hash[s[j]]
+
+
+you’re trying to access hash[97], hash[98] 😬
+→ out of bounds error
+
+✅ Correct way
+
+Convert character to index using 'a':
+
+hash[s[j] - 'a']++;
+
+
+Because:
+
+'a' - 'a' = 0
+'b' - 'a' = 1
+...
+'z' - 'a' = 25
+
+
+Perfect fit for size 26 ✅
+
+When is hash[s[j]] valid?
+
+Only when your hash array size is 256 (for all ASCII characters):
+
+vector<int> hash(256, 0);
+hash[s[j]]++;
+
+Quick rule to remember 🔑
+
+26 size → hash[ch - 'a'] (only lowercase a–z)
+
+256 size → hash[ch] (any ASCII character)
+
+If you want, I can dry-run an example or show this in a real sliding-window problem 👍
+
+for uppercase
+
+For uppercase letters (A–Z) 👇
+
+✅ Correct hashing
+vector<int> hash(26, 0);
+hash[s[j] - 'A']++;
+
+Why this works
+
+ASCII values:
+
+'A' = 65
+'B' = 66
+...
+'Z' = 90
+
+
+So:
+
+'A' - 'A' = 0
+'B' - 'A' = 1
+...
+'Z' - 'A' = 25
+
+
+Perfect mapping to indices 0–25 ✔️
+
+If string has BOTH uppercase + lowercase
+
+Option 1️⃣: Use ASCII hash (simplest)
+
+vector<int> hash(256, 0);
+hash[s[j]]++;
+
+
+Option 2️⃣: Separate arrays
+
+vector<int> lower(26, 0), upper(26, 0);
+
+if (s[j] >= 'a' && s[j] <= 'z')
+    lower[s[j] - 'a']++;
+else if (s[j] >= 'A' && s[j] <= 'Z')
+    upper[s[j] - 'A']++;
+
+Quick memory trick 🧠
+
+'a' → lowercase
+
+'A' → uppercase
+
+subtract the starting letter of the range

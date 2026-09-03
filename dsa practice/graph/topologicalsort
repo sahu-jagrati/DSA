@@ -1,0 +1,4 @@
+// if G has a topological ordering then G is a DAG
+// in every DAG, G, there is a node v with no incoming edges
+// if G is a DAG, then G has a topological sorting
+//  topo sort - linear ordering og n vertices such that if there is an edge an edge from u to v than in ordering u appears befor v.

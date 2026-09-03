@@ -1,0 +1,258 @@
+To convert a string to integer, it depends on the programming language you are using. Since you mostly work with C++, I’ll start with that 😊
+
+🔹 In C++
+✅ 1. Using stoi() (Recommended)
+#include <iostream>
+using namespace std;
+
+int main() {
+    string s = "1234";
+    int num = stoi(s);
+    cout << num;
+}
+
+
+✔ Simple and easy
+✔ Works for positive and negative numbers
+
+✅ 2. Using stringstream
+#include <iostream>
+#include <sstream>
+using namespace std;
+
+int main() {
+    string s = "1234";
+    stringstream ss(s);
+    int num;
+    ss >> num;
+    cout << num;
+}
+
+
+✔ Useful when handling mixed input
+
+✅ 3. Using atoi() (Older method)
+#include <iostream>
+#include <cstdlib>
+using namespace std;
+
+int main() {
+    string s = "1234";
+    int num = atoi(s.c_str());
+    cout << num;
+}
+
+
+⚠ Less safe (doesn't handle errors well)
+
+🔹 In Python
+s = "1234"
+num = int(s)
+print(num)
+
+🔹 Important: Handling Invalid Input (C++)
+
+If the string is not a valid number:
+
+string s = "12a3";
+int num = stoi(s);  // throws invalid_argument exception
+
+
+Better way:
+
+try {
+    int num = stoi(s);
+}
+catch (invalid_argument) {
+    cout << "Invalid number!";
+}
+
+
+// how to check the number is even or odd using bitwise AND (&) operators
+
+What is (n & 1) ?
+
+& is the bitwise AND operator.
+
+It compares bits of two numbers.
+
+🔍 What does 1 look like in binary?
+1  →  0001
+
+
+So when you do:
+
+n & 1
+
+
+You are checking only the last (rightmost) bit of n.
+
+✅ Why It Works
+
+Binary numbers:
+
+Decimal	Binary
+6	110
+7	111
+8	1000
+
+Now:
+
+Example 1️⃣: n = 6 so (n&1) is
+  110   (6)
+& 001   (1)
+------
+  000   → 0
+
+
+✔ Last bit is 0 → number is EVEN
+
+Example 2️⃣: n = 7
+  111   (7)
+& 001   (1)
+------
+  001   → 1
+
+
+✔ Last bit is 1 → number is ODD
+
+🎯 So (n & 1) Means:
+
+Returns 1 if last bit is 1 (odd number)
+
+Returns 0 if last bit is 0 (even number)
+
+🔥 Why It’s Used in Hamming Weight
+setBit += (n & 1);
+
+
+If last bit is 1 → add 1
+If last bit is 0 → add 0
+
+Then shift right:
+
+n = n >> 1;
+
+
+This moves to the next bit.
+
+🚀 Faster Than % 2
+
+Instead of:
+
+n % 2
+
+
+We use:
+
+n & 1
+
+
+Because bitwise operations are faster.
+
+
+What does (n&(n-1)) do?
+It removes the rightmost(last) set bit(1) from a number.
+
+Why Does This Work?
+
+When you subtract 1 from a number:
+
+The rightmost 1 becomes 0
+
+All bits to its right become 1
+
+Then when you AND it with original number, that rightmost 1 disappears.
+
+✅ Example 1: n = 12
+
+Binary of 12:
+
+12 = 1100
+
+
+Now subtract 1:
+
+11 = 1011
+
+
+Now AND:
+
+  1100
+& 1011
+------
+  1000
+
+
+✔ The last 1 is removed.
+
+✅ Example 2: n = 10
+10 = 1010
+9  = 1001
+
+  1010
+& 1001
+------
+  1000
+
+
+Again → rightmost 1 removed.
+
+🎯 Important Property
+
+Every time you do:
+
+n = n & (n - 1);
+
+
+👉 One set bit disappears.
+
+🚀 Why Is This Powerful?
+
+It is used to:
+
+Count set bits (Hamming weight)
+
+Check if number is power of 2
+
+Bit manipulation problems
+
+🔥 Example: Count Set Bits
+int hammingWeight(int n)
+{
+    int count = 0;
+
+    while (n != 0)
+    {
+        n = n & (n - 1);
+        count++;
+    }
+
+    return count;
+}
+
+
+Time complexity = O(number of 1s)
+Very efficient ✅
+
+💡 Check Power of 2 Trick
+
+If a number has only one set bit:
+
+if (n > 0 && (n & (n - 1)) == 0)
+
+
+Then it is a power of 2.
+
+Examples:
+
+8 → 1000 ✔
+
+16 → 10000 ✔
+
+10 → 1010 ❌
+
+🧠 Visual Rule to Remember
+
+👉 n & (n - 1)
+= “Remove the lowest 1 bit”

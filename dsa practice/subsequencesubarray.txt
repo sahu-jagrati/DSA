@@ -1,0 +1,23 @@
+The key difference is contiguity: a subarray/substring must be a continuous part of the original sequence, while a subsequence can have non-continuous elements, provided their relative order is maintained. 
+
+
+Subarray/Substring: A contiguous sequence of elements within an array (subarray) or characters within a string (substring). They must appear in the original sequence with no elements skipped in between.
+Example (Array): In [1, 2, 3, 4], [2, 3] is a subarray. [1, 3] is not.
+Example (String): In "hello", "ell" is a substring. "hlo" is not.
+
+
+Subsequence: A sequence of elements derived from another sequence by deleting some or no elements without changing the order of the remaining elements. The elements do not need to be adjacent in the original sequence.
+Example (Array): In [1, 2, 3, 4], [1, 3] and [2, 4] are valid subsequences.
+Example (String): In "hello", "hlo" is a valid subsequence. 
+
+
+
+Summary of Differences
+Feature 	          Subarray/Substring	                Subsequence
+Contiguity-	     Must be contiguous (adjacent)        	Not necessarily contiguous
+Order Maintained?-	       Yes	                         Yes
+Context-        	Arrays (subarray) or Strings (substring)   	Arrays or Strings
+Number (non-empty)	n*(n+1)/2 for a sequence of size n      2^n - 1 for a sequence of size n
+
+Key Relationship
+Every subarray/substring is also a subsequence, but not every subsequence is a subarray/substring.

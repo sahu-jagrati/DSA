@@ -1,0 +1,16 @@
+A graph is complete when every distinct pair of vertices is connected by a unique, direct edge. In this type of simple, undirected graph, every node has a direct path to all other nodes in the network.
+
+
+Key Properties
+
+Notation: Denoted as Kn , where n is the number of vertices
+
+Number of Edges: The total number of edges is exactly n(n-1)/2
+
+Vertex Degree: Every vertex has a degree of \(n-1\) (meaning it connects to every other vertex).
+
+No Self-Loops: It is a "simple" graph, meaning no vertex connects to itself.
+
+
+
+A connected graph is a graph in which every pair of vertices (nodes) is linked by a path of edges. This means you can travel from any vertex to any other vertex in the graph by following the edges. If a graph is not connected, it is considered disconnected and breaks down into separate "connected components

@@ -1,0 +1,141 @@
+In C++, a sort comparator is used to define how elements should be ordered when using sort() from the C++ Standard Template Library.
+
+🔹 Basic Syntax
+sort(start, end, comparator);
+
+comparator decides the order
+
+It must return:
+
+true → correct order
+
+false → swap needed
+
+🔹 1. Default Sorting
+sort(arr.begin(), arr.end());  // ascending
+🔹 2. Custom Comparator (Function)
+bool comp(int a, int b) {
+    return a > b;  // descending
+}
+
+sort(arr.begin(), arr.end(), comp);
+🔹 3. Using Lambda (Most Common 🔥)
+sort(arr.begin(), arr.end(), [](int a, int b) {
+    return a > b;  // descending
+});
+🔹 4. Comparator for Pairs
+👉 Sort by second element
+sort(v.begin(), v.end(), [](pair<int,int> a, pair<int,int> b) {
+    return a.second < b.second;
+});
+🔹 5. Multiple Conditions (Important ⭐)
+sort(v.begin(), v.end(), [](pair<int,int> a, pair<int,int> b) {
+    if (a.first == b.first)
+        return a.second < b.second;  // tie-break
+    return a.first > b.first;
+});
+🔹 6. Comparator for Strings
+sort(v.begin(), v.end(), [](string a, string b) {
+    return a.length() < b.length();
+});
+🔥 Key Rule (Very Important)
+
+Comparator must follow:
+
+if (comp(a, b) == true)
+    → a comes before b
+❌ Common Mistake
+return a >= b;  // WRONG ❌
+
+👉 Must be strict comparison (< or >), not <= or >=
+
+🔹 Real Example
+vector<int> arr = {5, 2, 8, 1};
+
+sort(arr.begin(), arr.end(), [](int a, int b) {
+    return a > b;
+});
+
+// Output: 8 5 2 1
+💡 Tip for Interviews
+
+Use lambda → clean & fast
+
+Remember:
+👉 true = correct order
+
+If you want, I can give:
+✅ Comparator for custom class/struct
+✅ Sorting vector<vector<int>>
+✅ Tricky interview questions on comparator
+
+sort(mpp.begin(),mpp.end(),[&](unordered_map<int,int>&mpp1,unordered_map<int,int>mpp2){
+    if()
+  }); for map how we use
+
+Your current attempt has a conceptual mistake ❌
+
+👉 You cannot sort an unordered_map directly using sort() because:
+
+unordered_map is not a sequence container
+
+It does not support random access iterators
+
+❌ What’s wrong in your code
+sort(mpp.begin(), mpp.end(), [&](unordered_map<int,int>& mpp1, unordered_map<int,int> mpp2)
+
+Problems:
+
+You are passing maps inside comparator ❌
+
+But sort() works on elements, not containers
+
+mpp.begin() is not valid for sorting here ❌
+
+✅ Correct Approach (IMPORTANT 🔥)
+
+👉 Convert map → vector, then sort
+
+🔹 Step 1: Convert to vector
+vector<pair<int,int>> vec(mpp.begin(), mpp.end());
+🔹 Step 2: Apply sort with comparator
+✅ Sort by value
+sort(vec.begin(), vec.end(), [](pair<int,int> a, pair<int,int> b) {
+    return a.second < b.second;  // ascending by value
+});
+🔹 Full Example
+unordered_map<int,int> mpp;
+mpp[1] = 5;
+mpp[2] = 2;
+mpp[3] = 8;
+
+// Step 1
+vector<pair<int,int>> vec(mpp.begin(), mpp.end());
+
+// Step 2
+sort(vec.begin(), vec.end(), [](pair<int,int> a, pair<int,int> b) {
+    return a.second < b.second;
+});
+
+// Print
+for(auto it : vec){
+    cout << it.first << " " << it.second << endl;
+}
+🔥 Different Sorting Options
+👉 Sort by key
+return a.first < b.first;
+👉 Sort by value descending
+return a.second > b.second;
+👉 Tie-breaking (IMPORTANT ⭐)
+sort(vec.begin(), vec.end(), [](pair<int,int> a, pair<int,int> b) {
+    if (a.second == b.second)
+        return a.first < b.first;
+    return a.second > b.second;
+});
+💡 Key Takeaway
+
+❌ Cannot sort unordered_map directly
+
+✅ Always convert to vector<pair<>>
+
+✅ Then apply sort()

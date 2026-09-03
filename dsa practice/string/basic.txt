@@ -1,0 +1,1788 @@
+What isalnum() checks
+
+It returns true if the character is:
+
+A–Z
+
+a–z
+
+0–9
+
+✅ Check if the entire string is alphanumeric
+bool isAlphanumeric(string s) {
+    for (char ch : s) {
+        if (!isalnum(ch)) {
+            return false;
+        }
+    }
+    return true;
+}
+
+
+Usage:
+
+string s = "Hello123";
+
+if (isAlphanumeric(s))
+    cout << "Alphanumeric";
+else
+    cout << "Not alphanumeric";
+
+✅ Manual method (without isalnum)
+
+Sometimes interviewers ask this 👀
+
+if ((ch >= 'A' && ch <= 'Z') ||
+    (ch >= 'a' && ch <= 'z') ||
+    (ch >= '0' && ch <= '9')) {
+    // alphanumeric
+}
+
+🚫 Common mistake
+
+❌ Don’t compare strings directly with characters:
+
+if (s >= 'a' && s <= 'z')  // WRONG
+
+🧠 Quick tip
+
+If you’re working on LeetCode / string problems, always prefer:
+👉 isalnum(), isalpha(), isdigit() — clean + safe.
+
+
+
+If you want to take a full sentence (with spaces) as input, here’s how you do it in C++.
+
+✅ Correct way: getline()
+#include <iostream>
+using namespace std;
+
+int main() {
+    string sentence;
+    getline(cin, sentence);   // takes full sentence including spaces
+
+    cout << sentence;
+    return 0;
+}
+
+📌 Example Input
+I am learning C++ strings
+
+📌 Output
+I am learning C++ strings
+
+❌ Why NOT cin >> sentence?
+cin >> sentence;
+
+
+This only reads one word and stops at space.
+
+Input:
+
+I am learning
+
+
+Stored value:
+
+"I"
+
+⚠️ Common issue: getline after cin
+
+If you used cin before getline, it may skip input due to newline left in buffer.
+
+✅ Fix it using cin.ignore()
+int n;
+cin >> n;
+cin.ignore();   // ignore leftover newline
+
+string sentence;
+getline(cin, sentence);
+
+🧠 Quick summary
+Task	Method
+One word-	cin >> s
+Full sentence- 	getline(cin, s)
+After using cin- 	cin.ignore()
+
+
+
+
+In C++, converting uppercase → lowercase is easy with tolower().
+
+✅ Convert a single character
+#include <cctype>
+
+char ch = 'A';
+ch = tolower(ch);   // 'a'
+
+✅ Convert a whole string to lowercase
+#include <iostream>
+#include <cctype>
+using namespace std;
+
+int main() {
+    string s = "HeLLo WoRLD";
+
+    for (char &ch : s) {
+        ch = tolower(ch);
+    }
+
+    cout << s;   // hello world
+    return 0;
+}
+
+⚠️ Important interview note
+
+Always pass unsigned char to tolower() to avoid undefined behavior:
+
+ch = tolower((unsigned char)ch);
+
+
+So the safe version is:
+
+for (char &ch : s) {
+    ch = tolower((unsigned char)ch);
+}
+
+✅ Using STL transform() (clean & professional)
+#include <algorithm>
+
+transform(s.begin(), s.end(), s.begin(),
+          [](unsigned char c){ return tolower(c); });
+
+🚫 Common mistake
+
+❌ Don’t do this:
+
+ch = ch + 32;   // ❌ works only for ASCII, bad practice, this is used only when question say not use tolower() directly then use when string s s consists of printable ASCII characters.
+
+🧠 Quick recap
+Task	Method
+One char-	tolower(ch)
+Full string-	loop + tolower
+Clean STL-	transform()
+
+
+// can we sort string? like s=rat initial, after sorting s=art 
+strings are sortable in C++ 👍
+A string is basically a char array, so all STL algorithms work on it.
+
+✅ Basic string sort (ascending)
+#include <algorithm>
+
+string s = "dcab";
+sort(s.begin(), s.end());
+
+Result:
+"abcd"
+
+🔁 Sort in descending order
+sort(s.begin(), s.end(), greater<char>());
+
+Result:
+"dcba"
+
+🎯 Sort part of a string
+sort(s.begin() + 1, s.begin() + 4);
+
+Example:
+s = "zdcab"
+→ "zabcd"
+
+🔡 Case-insensitive sort (important!)
+sort(s.begin(), s.end(), [](char a, char b) {
+    return tolower(a) < tolower(b);
+});
+
+🧠 Very common interview use-cases
+1️⃣ Check if two strings are anagrams
+bool isAnagram(string a, string b) {
+    sort(a.begin(), a.end());
+    sort(b.begin(), b.end());
+    return a == b;
+}
+
+2️⃣ Sort characters by frequency
+unordered_map<char,int> freq;
+for (char c : s) freq[c]++;
+
+vector<pair<int,char>> v;
+for (auto &p : freq)
+    v.push_back({p.second, p.first});
+
+sort(v.rbegin(), v.rend());
+
+⚠️ Important notes
+
+Time complexity: O(n log n)
+
+Works for:
+
+lowercase
+
+uppercase
+
+digits
+
+symbols
+
+ASCII order is used by default ('A' < 'a')
+
+❓ Quick check
+string s = "bA1";
+sort(s.begin(), s.end());
+
+
+Result:
+
+"1Ab"
+
+
+(ASCII order!)
+
+// can we say two strings are equal like 
+// s=art,t=art
+// s==t yes
+In C++, saying two strings are equal is simple and safe, and there are a few correct ways to do it.
+
+✅ Best & most common way
+string a = "hello";
+string b = "hello";
+
+if (a == b) {
+    cout << "Equal";
+}
+
+
+✔ compares length + every character
+✔ case-sensitive
+✔ preferred in interviews
+
+❌ What NOT to do (important!)
+if (a.c_str() == b.c_str())  // ❌ WRONG
+
+
+This compares memory addresses, not content.
+
+✅ Using .compare()
+if (a.compare(b) == 0) {
+    cout << "Equal";
+}
+
+
+returns 0 → equal
+
+< 0 or > 0 → not equal
+
+🔠 Case-insensitive comparison
+bool equalIgnoreCase(string a, string b) {
+    if (a.size() != b.size()) return false;
+    for (int i = 0; i < a.size(); i++) {
+        if (tolower(a[i]) != tolower(b[i])) return false;
+    }
+    return true;
+}
+
+🧠 After sorting (common trick)
+sort(a.begin(), a.end());
+sort(b.begin(), b.end());
+
+if (a == b) cout << "Equal";
+
+
+Used when:
+
+checking anagrams
+
+comparing character frequency
+
+⚠️ Edge cases to remember
+
+"abc" ≠ "Abc" (case matters)
+
+"abc " ≠ "abc" (space matters)
+
+Length mismatch → automatically false
+
+🎯 Interview tip
+
+If asked “How do you check if two strings are equal?”
+👉 Say: “Using == operator — it compares content, not address.”
+
+
+// how to break sentence into string
+Best & simplest: stringstream
+#include <bits/stdc++.h>
+using namespace std;
+
+int main() {
+    string s = "dog cat cat fish";
+    stringstream ss(s);
+
+    string word;
+    while (ss >> word) {
+        cout << word << endl;
+    }
+}
+
+
+Output:
+
+dog
+cat
+cat
+fish
+
+
+➡️ This splits by spaces automatically.
+
+✅ Store words in a vector
+vector<string> words;
+string word;
+stringstream ss(s);
+
+while (ss >> word) {
+    words.push_back(word);
+}
+
+✅ Using getline() (for custom delimiter)
+string s = "dog,cat,cat,fish";
+stringstream ss(s);
+string word;
+
+while (getline(ss, word, ',')) {
+    cout << word << endl;
+}
+
+✅ Manual method (no library, interview-friendly)
+vector<string> words;
+string temp = "";
+
+for (char c : s) {
+    if (c == ' ') {
+        if (!temp.empty()) {
+            words.push_back(temp);
+            temp = "";
+        }
+    } else {
+        temp += c;
+    }
+}
+if (!temp.empty()) words.push_back(temp);
+
+🧠 Which should YOU use?
+Situation-	Best choice
+Normal sentence split by space-	stringstream
+Custom delimiter-	getline()
+No STL allowed-	Manual method
+
+for getting last word of sentence
+stringstream ss(s);
+string word;
+while(ss>>word){
+
+}
+cout<<word; // get last word;
+cout<<word.size(); // get last word length
+
+
+int main()
+{
+  string pattern;
+  cout << "Enter pattern: ";
+  cin >> pattern;
+  cout << "Enter sentence: ";
+  string sentence;
+  getline(cin, sentence);
+
+  bool answer = wordPattern(pattern, sentence);
+  cout << answer << endl;
+  return 0;
+}
+
+Nice catch bringing main() 👍 — there’s a classic C++ input bug here.
+
+🔴 Problem
+cin >> pattern;
+getline(cin, sentence);
+
+
+After cin >> pattern, the newline (\n) stays in the buffer, so getline immediately reads an empty string.
+
+✅ Fix (one line)
+
+Add cin.ignore() before getline.
+
+✔️ Corrected main()
+int main()
+{
+    string pattern;
+    cout << "Enter pattern: ";
+    cin >> pattern;
+
+    cout << "Enter sentence: ";
+    string sentence;
+    cin.ignore();              // 🔥 clear newline
+    getline(cin, sentence);
+
+    bool answer = wordPattern(pattern, sentence);
+    cout << answer << endl;
+
+    return 0;
+}
+
+🧠 Why this works
+
+cin >> pattern → reads word, leaves \n
+
+cin.ignore() → removes that leftover newline
+
+getline → now correctly reads the full sentence
+
+🧪 Example run
+Enter pattern: aaa
+Enter sentence: aa aa aa aa
+0
+
+Enter pattern: abba
+Enter sentence: dog cat cat dog
+1
+
+⭐ Pro tip (cleaner input style)
+
+If you want everything via getline:
+
+getline(cin, pattern);
+getline(cin, sentence);
+
+
+But then make sure pattern has no spaces
+
+
+
+If you want to create / get a vowels array in C++, here are the clean ways 👇
+
+✅ 1️⃣ Simple Character Array
+char vowels[] = {'a','e','i','o','u','A','E','I','O','U'};
+
+
+Now you can access like:
+
+for(int i = 0; i < 10; i++) {
+    cout << vowels[i] << " ";
+}
+
+✅ 2️⃣ Using vector<char>
+vector<char> vowels = {'a','e','i','o','u','A','E','I','O','U'};
+
+
+Access:
+
+for(char v : vowels) {
+    cout << v << " ";
+}
+
+✅ 3️⃣ Best Way (For Fast Checking) → Use set
+
+If your goal is to check whether a character is vowel, this is better:
+
+set<char> vowels = {'a','e','i','o','u','A','E','I','O','U'};
+
+if(vowels.count(ch)) {
+    cout << "It is vowel";
+}
+
+
+✔ Lookup time: O(log n)
+
+✅ 4️⃣ Even Faster → Use unordered_set
+unordered_set<char> vowels = {'a','e','i','o','u','A','E','I','O','U'};
+
+if(vowels.count(ch)) {
+    cout << "Vowel";
+}
+
+
+✔ Lookup time: O(1) average
+✔ Best for competitive coding
+
+✅ 5️⃣ Simplest Method (No Extra Space)
+
+If you don’t want array:
+
+if(ch=='a'||ch=='e'||ch=='i'||ch=='o'||ch=='u'||
+   ch=='A'||ch=='E'||ch=='I'||ch=='O'||ch=='U') {
+    cout << "Vowel";
+}
+
+“Shift one letter in string toward …” can mean different things, so I’ll explain the common cases clearly.
+
+✅ 1️⃣ Shift Letter Forward in Alphabet
+
+If you want:
+
+'a' → 'b'
+'b' → 'c'
+'z' → 'a'
+
+✔ Code:
+char shiftForward(char ch) {
+    if (ch == 'z') return 'a';
+    if (ch == 'Z') return 'A';
+    return ch + 1;
+}
+
+Example:
+string s = "abcZ";
+for (int i = 0; i < s.size(); i++) {
+    s[i] = shiftForward(s[i]);
+}
+cout << s;   // bcda
+
+✅ 2️⃣ Shift Letter Backward in Alphabet
+'b' → 'a'
+'a' → 'z'
+
+char shiftBackward(char ch) {
+    if (ch == 'a') return 'z';
+    if (ch == 'A') return 'Z';
+    return ch - 1;
+}
+
+✅ 3️⃣ Shift Characters to Right in String (Position Shift)
+
+If you mean shifting position:
+
+"abcd" → "dabc"
+
+✔ Code:
+string s = "abcd";
+char last = s.back();
+
+for (int i = s.size() - 1; i > 0; i--) {
+    s[i] = s[i - 1];
+}
+s[0] = last;
+
+cout << s;  // dabc
+
+✅ 4️⃣ Shift Characters to Left in String
+"abcd" → "bcda"
+
+string s = "abcd";
+char first = s[0];
+
+for (int i = 0; i < s.size() - 1; i++) {
+    s[i] = s[i + 1];
+}
+s[s.size() - 1] = first;
+
+cout << s;  // bcda
+
+🚀 5️⃣ Easiest Way (Using substr)
+Left shift:
+s = s.substr(1) + s[0];
+
+Right shift:
+s = s.back() + s.substr(0, s.size() - 1);
+
+
+If you want to add character 'a' 5 times to a string in C++, there are several clean ways to do it 👇
+
+✅ Method 1: Using string constructor (BEST)
+string result;
+result += string(5, 'a');
+
+👉 This directly creates "aaaaa" and appends it.
+
+✅ Method 2: Using loop
+string result;
+for(int i = 0; i < 5; i++) {
+    result += 'a';
+}
+✅ Method 3: Using append()
+string result;
+result.append(5, 'a');
+💡 Output (in all cases):
+aaaaa
+🚀 Which one should you use?
+Best & shortest: string(5, 'a')
+Readable: append(5, 'a')
+Flexible: loop (if condition-based)
+
+
+In C++, getting the ASCII value of a character is very simple because characters are internally stored as integers.
+
+✅ Basic Method
+#include <iostream>
+using namespace std;
+
+int main() {
+    char ch = 'A';
+    int ascii = ch;   // implicit conversion
+
+    cout << "ASCII value of " << ch << " is " << ascii << endl;
+    return 0;
+}
+🔹 Output
+ASCII value of A is 65
+✅ Using Type Casting (Explicit)
+int ascii = (int)ch;
+
+or modern C++ style:
+
+int ascii = static_cast<int>(ch);
+🔥 Quick Examples
+cout << (int)'a' << endl;  // 97
+cout << (int)'0' << endl;  // 48
+cout << (int)'Z' << endl;  // 90
+💡 Key Point
+C++ automatically converts char → int when needed.
+So you don’t have to cast, but casting makes your code clearer.
+
+I’ll show you how to convert ASCII ↔ char and how it’s used in real problems.
+
+🔁 1. ASCII → Character
+
+You just cast the integer back to char.
+
+#include <iostream>
+using namespace std;
+
+int main() {
+    int ascii = 65;
+    char ch = (char)ascii;
+
+    cout << "Character is: " << ch << endl;
+    return 0;
+}
+✅ Output
+Character is: A
+🔁 2. Character → ASCII (Quick Recap)
+char ch = 'b';
+cout << (int)ch;   // 98
+🔥 3. Important ASCII Tricks (VERY USEFUL)
+✅ (a) Convert lowercase → uppercase
+char ch = 'a';
+ch = ch - 32;
+cout << ch;   // A
+
+👉 Why?
+Because:
+
+'a' = 97  
+'A' = 65  
+Difference = 32
+✅ (b) Convert uppercase → lowercase
+char ch = 'A';
+ch = ch + 32;
+cout << ch;   // a
+✅ (c) Check if character is digit
+char ch = '5';
+
+if (ch >= '0' && ch <= '9') {
+    cout << "Digit";
+}
+✅ (d) Convert char digit → integer
+char ch = '7';
+int num = ch - '0';
+
+cout << num;   // 7
+
+👉 Super important for problems!
+
+✅ (e) Convert integer → char digit
+int num = 5;
+char ch = num + '0';
+
+cout << ch;   // '5'
+🧠 Where this is used in real problems
+String parsing
+Competitive programming
+Encryption / hashing
+Input processing
+Checking character types
+⚡ Pro Tip (Better Practice)
+
+Instead of manual ASCII math, you can also use built-in functions:
+
+#include <cctype>
+
+isalpha(ch);   // letter
+isdigit(ch);   // digit
+islower(ch);   // lowercase
+isupper(ch);   // uppercase
+
+
+string erase in C++
+Last Updated : 16 Sep, 2025
+The string erase() function is a built-in function of the string class that is used to erase the whole or part of the string, shortening its length. The function provides different ways to delete a portion of a string based on either an index position or a range of characters or delete the whole string.
+
+
+
+
+#include <iostream>
+#include <string>
+using namespace std;
+​
+int main()
+{
+    string str = "Hello, World!";
+​
+    // Erase a single character sterting
+    // from index 5
+    str.erase(5, 1);
+​
+    cout << str;
+    return 0;
+}
+
+Output
+Hello World!
+Syntax
+The string erase() function provides 5 different overloads for different purposes:
+
+
+s.erase()                   // Erases whole string
+s.erase(idx)             // Erases all characters after idx
+s.erase(idx, k)        // Erases k characters after idx
+s.erase(itr)             // Erases character at itr
+s.erase(first, last) // Erases character in range [first, last)
+Let's look at how to use each overload one by one.
+
+Table of Content
+
+Erase Single Character from Given Position
+Erase Range of Characters
+Erase k Characters After Given Position
+Erase All Characters After Given Position
+Erase All Characters
+Erase Single Character from Given Position
+string erase() function can be used for erasing a single character from the specific position in the string.
+
+Syntax
+
+s.erase(itr)
+Parameters
+
+itr: Iterator to the character you want to erase (note that it is an iterator, not index)
+Return Value
+
+Returns the character now at the position of the removed character.
+If no such character is remaining, returns iterator to the string::end()
+
+
+
+#include <iostream>
+#include <string>
+using namespace std;
+​
+int main()
+{
+    string s("Hello World!");
+​
+    // Deletes character at position 4
+    s.erase(s.begin() + 4);
+​
+    cout << s;
+    return 0;
+}
+
+Output
+Hell World!
+Erase Range of Characters
+We can also erase a range of characters from the string using string erase() function.
+
+Syntax
+
+s.erase(first, last)
+Parameters
+
+first: Iterator to the first element in the range.
+last: Iterator to one element after the last element in the range.
+Return Value
+
+Returns the character now at the position of the first removed character.
+If no such character is remaining, returns iterator to the string::end()
+
+
+
+#include <bits/stdc++.h>
+using namespace std;
+​
+int main()
+{
+    string s("Hello World!");
+​
+    // Define the range as the word "Hello "
+    auto first = s.begin();
+    auto last = s.begin() + 6;
+​
+    // Remove the range [first, last)
+    s.erase(first, last);
+​
+    cout << s;
+    return 0;
+}
+
+Output
+World!
+Erase k Characters After Given Position
+The below version erases all the characters after the given index, but we can also limit the number of characters to be deleted using string::erase.
+
+Syntax
+
+s.erase(idx, k)
+Parameters
+
+idx: The position (index) at which character deletion begins.
+k: Number of characters to be erased (including character at idx).
+Return Value
+
+This version returns the current string.
+
+
+
+#include <bits/stdc++.h>
+using namespace std;
+​
+int main()
+{
+    string s("Hello World!");
+​
+    // Deletes 5 characters starting from index number 0
+    s.erase(0, 5);
+​
+    cout << s;
+    return 0;
+}
+
+Output
+ World!
+Erase All Characters After Given Position
+string erase() function can also be instructed to erase the characters after some given position.
+
+Syntax
+
+s.erase(idx)
+Parameters
+
+idx: The position (index) at which character deletion begins.
+Return Value
+
+This version returns the current string.
+
+
+
+#include <bits/stdc++.h>
+using namespace std;
+​
+int main()
+{
+    string s("Hello World!");
+​
+    // Deletes the word " World!"
+    s.erase(5);
+​
+    cout << s;
+    return 0;
+}
+
+Output
+Hello
+Erase All Characters
+The string erase() function is able to delete all the characters of the string effectively clearing it. The length of the string will be reduced to 0.
+
+Syntax
+
+s.erase()
+Parameter
+
+This version takes no parameters.
+Return Value
+
+This version returns the current string.
+
+
+
+#include <bits/stdc++.h>
+using namespace std;
+​
+int main()
+{
+    string s("Hello World!");
+​
+    // Erasing string using string::erase()
+    s.erase();
+​
+    cout << s;
+    return 0;
+}
+
+Output
+
+(no output)
+string erase() vs string clear()
+The string clear() is a function used to erase the contents of the string, but it is a lot different from string erase(). Below is the table that lists the major differences between string erase() and string clear().
+
+
+This error:
+
+terminate called after throwing an instance of 'std::invalid_argument'
+what():  stoi
+
+means that stoi() failed to convert a string into an integer because the string is not a valid number.
+
+🔍 Why this happens
+
+stoi(string) throws std::invalid_argument when:
+
+❌ 1. String contains non-numeric characters
+stoi("abc");      // ❌ error
+stoi("12a3");     // ❌ error
+❌ 2. Empty string
+stoi("");         // ❌ error
+❌ 3. String has only spaces
+stoi("   ");      // ❌ error
+❌ 4. Wrong parsing logic (very common in CP)
+
+Example:
+
+string s = "a1b2";
+stoi(s[i]);  // ❌ WRONG (char passed instead of string)
+✅ How to fix it
+✔️ 1. Ensure string is valid before stoi
+bool isNumber(string &s) {
+    if(s.empty()) return false;
+    for(char c : s) {
+        if(!isdigit(c)) return false;
+    }
+    return true;
+}
+if(isNumber(s)) {
+    int x = stoi(s);
+}
+✔️ 2. Use try-catch (best safe method)
+try {
+    int x = stoi(s);
+} catch (invalid_argument &e) {
+    cout << "Invalid number!" << endl;
+}
+✔️ 3. If working with characters → convert properly
+char c = '5';
+int num = c - '0';   // ✅ correct
+
+NOT:
+
+stoi(c);  // ❌ wrong
+🔥 Most Common Mistake (important for you)
+
+From your previous coding style, you might be doing something like:
+
+s[i] = shiftForward(s[i-1], s[i]);
+
+Here s[i] is a character, not a string → if you later pass it to stoi, it will crash.
+
+🧠 Quick Debug Tip
+
+Before calling stoi, print the string:
+
+cout << "Value: " << s << endl;
+
+You’ll instantly see what's wrong.
+
+✅ Summary
+stoi() only works on valid numeric strings
+Fails on:
+empty string
+letters/symbols
+incorrect type (char instead of string)
+Use validation or try-catch
+
+If you paste your exact code, I can pinpoint the exact line causing this 🔍
+
+range of stoi() is
+
+The function stoi() in C++ converts a string to an int, so its range depends on the limits of the int type.
+
+✅ Range of stoi()
+
+stoi() returns a value of type int, so the valid range is:
+
+-2,147,483,648  to  2,147,483,647
+
+i.e.:
+
+INT_MIN to INT_MAX
+⚠️ What happens if value is out of range?
+
+If the string represents a number outside this range, stoi() throws:
+
+std::out_of_range
+Example:
+stoi("999999999999");  // ❌ throws out_of_range
+⚠️ Two types of errors in stoi()
+Error Type	Reason
+invalid_argument	String is not a number (e.g., "abc")
+out_of_range	Number too large/small for int
+✅ Safer alternatives (important)
+
+If you expect large numbers, use:
+
+stoll()   // for long long
+Range of stoll():
+-9,223,372,036,854,775,808  to  9,223,372,036,854,775,807
+🔥 Pro Tip (for CP / interviews)
+Use stoi() → when constraints fit int
+Use stoll() → when numbers can be large (very common)
+✅ Example with safety
+try {
+    int x = stoi(s);
+} catch (out_of_range &e) {
+    cout << "Number too large!" << endl;
+} catch (invalid_argument &e) {
+    cout << "Not a number!" << endl;
+}
+
+If you want, I can show you when to use stoi vs stoll in real problems (very useful for placements 🚀).
+
+if we use stoll() then again convert number in string what we have to use
+
+Good question 👍 — this is a very common confusion.
+
+If you use stoll() (string → long long), then to convert back to string, you should use:
+
+✅ Use to_string()
+long long num = stoll(s);
+string result = to_string(num);
+🔁 Full Example
+#include <bits/stdc++.h>
+using namespace std;
+
+int main() {
+    string s = "1234567890123";
+
+    long long num = stoll(s);   // string → long long
+    num += 10;
+
+    string newStr = to_string(num);  // long long → string
+
+    cout << newStr;
+}
+📌 Summary
+Conversion	Function
+string → int	stoi()
+string → long long	stoll()
+int → string	to_string()
+long long → string	to_string()
+⚠️ Common mistake
+string s = "123";
+long long x = stoll(s);
+
+// ❌ wrong
+string t = string(x);
+
+// ✅ correct
+string t = to_string(x);
+🔥 Pro Tip
+
+to_string() works for:
+
+int
+long long
+float
+double
+
+When numbers are bigger than long long, you cannot use stoi() / stoll() at all. You must handle them as strings.
+
+🔥 Concept: Big Integers using Strings
+
+Instead of:
+
+long long x = stoll(s); // ❌ fails for very large numbers
+
+You do:
+
+string s = "123456789123456789123456789"; // ✅ handle as string
+
+you can move to the previous index after using erase(), but you need to be careful because erase() changes the string size and shifts elements left.
+
+🔹 Key behavior of erase()
+
+When you do:
+
+s.erase(i, 1);
+Character at index i is removed
+All elements after i shift one step left
+String size decreases by 1
+⚠️ Important point while iterating
+
+If you're looping forward and erase a character:
+
+for (int i = 0; i < s.size(); i++) {
+    if (condition) {
+        s.erase(i, 1);
+    }
+}
+
+👉 Problem: after erase, next character shifts into index i, but loop does i++, so you skip a character
+
+✅ Solution 1: Move back one step
+
+Yes, you can do:
+
+for (int i = 0; i < s.size(); i++) {
+    if (s[i] == 'a') {
+        s.erase(i, 1);
+        i--;  // 👈 move back to recheck shifted character
+    }
+}
+
+✔ This works because:
+
+After erase, new character comes at index i
+i-- ensures we don’t skip it
+✅ Solution 2 (Better): Traverse from back
+for (int i = s.size() - 1; i >= 0; i--) {
+    if (s[i] == 'a') {
+        s.erase(i, 1);
+    }
+}
+
+✔ No need for i-- trick
+✔ Safer and cleaner
+
+💡 Example
+string s = "aaab";
+
+for (int i = 0; i < s.size(); i++) {
+    if (s[i] == 'a') {
+        s.erase(i, 1);
+        i--;
+    }
+}
+
+// Output: "b"
+🔥 Summary
+Yes, you can move to previous index (i--) after erase
+This is often necessary in forward loops
+Best practice: iterate backward to avoid bugs
+
+
+In C++, you can take a substring using the built-in substr() function of the string class.
+
+🔹 Syntax
+string substr (size_t start, size_t length);
+start → index where substring begins
+length → number of characters to take
+🔹 Example 1: Basic usage
+#include <iostream>
+using namespace std;
+
+int main() {
+    string s = "hello world";
+    
+    string sub = s.substr(0, 5); // from index 0, length 5
+    
+    cout << sub;  // Output: hello
+}
+🔹 Example 2: From index to end
+
+If you don’t give length:
+
+string sub = s.substr(6);
+
+👉 Output: "world"
+
+🔹 Example 3: Middle part
+string s = "programming";
+
+string sub = s.substr(3, 4);
+
+cout << sub;  // Output: gram
+⚠️ Important points
+If start is out of range → ❌ runtime error
+If length exceeds → it just takes till end (no error)
+🔥 Common use case (very important)
+Extract last k characters:
+string last = s.substr(s.size() - k);
+💡 Tip
+
+substr() does not modify original string, it returns a new one.
+
+
+The .find() function in C++ is used to search for a substring or character inside a string.
+
+🔹 Syntax
+size_t pos = s.find(value);
+value → character or substring to search
+Returns:
+✅ index of first occurrence
+❌ string::npos if not found
+🔹 Example 1: Find character
+#include <iostream>
+using namespace std;
+
+int main() {
+    string s = "hello";
+
+    int pos = s.find('l');
+
+    cout << pos;  // Output: 2
+}
+🔹 Example 2: Find substring
+string s = "hello world";
+
+int pos = s.find("world");
+
+cout << pos;  // Output: 6
+🔹 Example 3: Check if exists
+if (s.find("abc") != string::npos) {
+    cout << "Found";
+} else {
+    cout << "Not Found";
+}
+🔹 Example 4: Start searching from index
+string s = "banana";
+
+int pos = s.find('a', 2);  // start from index 2
+
+cout << pos;  // Output: 3
+⚠️ Important points
+.find() always returns first occurrence
+Return type is size_t (not int)
+If not found → returns string::npos (very important!)
+🔥 Common pattern (loop for all occurrences)
+string s = "banana";
+size_t pos = s.find('a');
+
+while (pos != string::npos) {
+    cout << pos << " ";
+    pos = s.find('a', pos + 1);
+}
+
+👉 Output: 1 3 5
+
+🧠 Quick Summary
+Use .find() to search in string
+Returns index or npos
+Can start search from a given position
+
+If you want, I can also explain:
+👉 difference between .find() and .rfind()
+👉 or how .find() is used in tricky interview questions 🚀
+
+.find() can be used to check only string exist or not and return true or false
+
+Good question — and the answer is:
+
+❌ No, .find() does NOT directly return true or false.
+✔ It returns an index (position), or string::npos if not found.
+
+🔹 What .find() actually returns
+size_t pos = s.find("abc");
+If found → returns index (0, 1, 2, …)
+If not found → returns string::npos
+🔹 How to use it as true/false
+
+You can convert it into a boolean condition like this:
+
+if (s.find("abc") != string::npos) {
+    cout << "Found";
+} else {
+    cout << "Not Found";
+}
+
+✔ This behaves like true/false check
+
+⚠️ Common mistake (VERY IMPORTANT)
+if (s.find("abc"))  // ❌ WRONG
+
+👉 Why wrong?
+
+If substring is found at index 0, .find() returns 0
+0 is treated as false in C++
+So it gives wrong result
+🔹 Correct way (always use this)
+if (s.find("abc") != string::npos)
+🔥 Example
+string s = "abcde";
+
+if (s.find("ab") != string::npos) {
+    cout << "Yes";
+}
+
+👉 Output: Yes
+
+🧠 Summary
+.find() → returns index, not boolean
+
+Use:
+
+!= string::npos
+
+Never write:
+
+if(s.find(...)) ❌
+
+If you want, I can show you a tricky interview question using .find() where many people make mistakes 🚀
+
+what is npos
+
+Great question — this is very important for strings in C++ 👇
+
+🔹 What is npos?
+
+npos is a special constant in the string class that means:
+
+👉 "not found"
+
+🔹 Definition
+string::npos
+It is the largest possible value of size_t
+Internally, it is usually:
+(size_t)(-1)
+🔹 Why do we need it?
+
+When you use .find():
+
+size_t pos = s.find("abc");
+If "abc" is found → returns index
+If not found → returns string::npos
+🔹 Example
+#include <iostream>
+using namespace std;
+
+int main() {
+    string s = "hello";
+
+    if (s.find("xyz") == string::npos) {
+        cout << "Not Found";
+    }
+}
+
+👉 Output: Not Found
+
+🔹 Important concept
+cout << string::npos;
+
+👉 Output will be a very large number (like 18446744073709551615 on 64-bit system)
+
+⚠️ Why not use -1 directly?
+
+Because:
+
+.find() returns size_t (unsigned)
+Comparing with -1 can cause confusion
+
+✔ Always use:
+
+string::npos
+🔥 Summary
+npos = not found indicator
+Used with .find(), .rfind(), etc.
+Always compare like:
+if (pos == string::npos)
+🧠 Simple analogy
+
+Think of it like:
+
+Index → valid position
+npos → ❌ "No such position exists"
+
+What is size_t in C++?
+
+size_t is a data type used to represent:
+
+👉 sizes and indices (non-negative values only)
+
+🔹 Simple meaning
+It is an unsigned integer type
+Used for:
+array indexing
+string positions
+sizes of objects
+🔹 Example
+#include <iostream>
+using namespace std;
+
+int main() {
+    string s = "hello";
+
+    size_t len = s.size();  // size_t type
+
+    cout << len;  // Output: 5
+}
+🔹 Key properties
+❌ Cannot store negative values
+✔ Always ≥ 0
+✔ Defined in <cstddef> (automatically included in many headers)
+🔹 Why not use int?
+
+Because size_t:
+
+Can store larger values than int
+Matches system architecture (32-bit / 64-bit)
+Avoids overflow for large data
+🔹 Where you see size_t
+s.size()
+s.length()
+s.find()
+vector.size()
+
+All return size_t
+
+⚠️ Important bug (very common)
+size_t i = 0;
+
+i--;  // ❌ not -1
+cout << i;
+
+👉 Output: very large number (because unsigned wraps around)
+
+🔹 Correct caution
+
+Be careful when doing:
+
+for (size_t i = s.size() - 1; i >= 0; i--) // ❌ infinite loop
+
+✔ Correct way:
+
+for (int i = s.size() - 1; i >= 0; i--)
+🔥 Summary
+size_t = unsigned integer for size/index
+Used everywhere in STL
+Never negative
+Watch out for underflow bugs
+
+How reverse() works in C++
+reverse(start_iterator, end_iterator);
+
+👉 It reverses elements in the range:
+[start, end) (end is NOT included)
+
+🔹 Your case
+reverse(s.begin(), s.begin() + 2);
+
+👉 This will reverse:
+
+index 0 and 1 (NOT index 2)
+🔹 Example
+string s = "abcdef";
+
+reverse(s.begin(), s.begin() + 2);
+cout << s;
+
+👉 Output:
+
+bacdef
+
+✔ Only 'a' and 'b' are reversed
+
+🔹 If you want to reverse from start to index i
+
+👉 You must do:
+
+reverse(s.begin(), s.begin() + i + 1);
+🔹 Example (reverse till index 2)
+string s = "abcdef";
+
+reverse(s.begin(), s.begin() + 3);
+cout << s;
+
+👉 Output:
+
+cbadef
+
+✔ Reversed: a b c → c b a
+
+⚠️ Common mistake
+reverse(s.begin(), s.begin() + i); // ❌ misses index i
+🔥 Summary
+Range is [start, end)
+End is excluded
+To include index i → use i + 1
+🧠 Quick rule
+
+👉 “If you want to include index i, always add +1”
+
+
+String tokenization in C++ means splitting a string into smaller parts (tokens) based on a delimiter (like space, comma, etc.).
+
+There are multiple ways to do it 👇
+
+🔹 1. Using stringstream (Most Common & Easy)
+#include <iostream>
+#include <sstream>
+using namespace std;
+
+int main() {
+    string s = "hello world this is cpp";
+    stringstream ss(s);
+    string token;
+
+    while (ss >> token) {
+        cout << token << endl;
+    }
+}
+
+👉 Output:
+
+hello
+world
+this
+is
+cpp
+
+✔ Splits by space automatically
+
+🔹 2. Using getline() with delimiter
+#include <iostream>
+#include <sstream>
+using namespace std;
+
+int main() {
+    string s = "apple,banana,mango";
+    stringstream ss(s);
+    string token;
+
+    while (getline(ss, token, ',')) {
+        cout << token << endl;
+    }
+}
+
+👉 Output:
+
+apple
+banana
+mango
+
+✔ Works with custom delimiter
+
+🔹 3. Using find() and substr() (Manual Method)
+#include <iostream>
+using namespace std;
+
+int main() {
+    string s = "a,b,c";
+    
+    while (s.find(',') != string::npos) {
+        int pos = s.find(',');
+        cout << s.substr(0, pos) << endl;
+        s.erase(0, pos + 1);
+    }
+    cout << s; // last token
+}
+
+👉 Output:
+
+a
+b
+c
+🔹 4. Using strtok() (C-style, not recommended)
+#include <iostream>
+#include <cstring>
+using namespace std;
+
+int main() {
+    char s[] = "hello world";
+
+    char* token = strtok(s, " ");
+
+    while (token != NULL) {
+        cout << token << endl;
+        token = strtok(NULL, " ");
+    }
+}
+
+⚠️ Modifies original string → use carefully
+
+🔥 Which one to use?
+Method	Use Case
+stringstream	Best for space-separated
+getline	Best for custom delimiter
+find + substr	Good for control
+strtok	Avoid in modern C++
+🧠 Important Tip
+
+If you're doing competitive programming, prefer:
+👉 getline() + stringstream
+
+What does isdigit() check?
+isdigit(ch)
+
+👉 It checks ONLY if the character is a digit from '0' to '9'
+
+✔ Range:
+
+'0' (48) to '9' (57)
+🔹 Example
+#include <iostream>
+#include <cctype>
+using namespace std;
+
+int main() {
+    cout << isdigit('5') << endl;  // 1 (true)
+    cout << isdigit('a') << endl;  // 0 (false)
+    cout << isdigit('-') << endl;  // 0 (false)
+}
+❗ Important clarification
+
+👉 isdigit() works on characters, NOT integers
+
+So:
+
+'5' ✅ → true
+5 ❌ → not valid use
+🔴 Does it check all integers?
+
+❌ NO
+It does NOT check:
+
+negative sign '-'
+plus sign '+'
+multi-digit numbers like "123"
+🔹 Example (important)
+string s = "-123";
+
+for (char ch : s) {
+    cout << isdigit(ch) << " ";
+}
+
+👉 Output:
+
+0 1 1 1
+
+✔ '-' is NOT a digit
+✔ Only '1','2','3' are digits
+
+🔥 Summary
+isdigit() checks only: '0' to '9'
+Works on single character
+Does NOT validate full integer strings
+🧠 Tip (interview level)
+
+To check if a string is a valid number:
+
+you must handle:
+sign (+/-)
+digits
+maybe decimal point
+
+Problem in your code
+cin >> n;
+vector<string> sentences(n);
+for (int i = 0; i < n; i++)
+{
+    string sentence;
+    getline(cin, sentence);
+}
+Issues:
+cin >> n leaves a newline (\n) in the buffer
+So the first getline() reads an empty line.
+You are not storing the input into sentences vector.
+✅ Correct version
+int n;
+cin >> n;
+cin.ignore(); // IMPORTANT: remove leftover newline
+
+vector<string> sentences(n);
+
+for (int i = 0; i < n; i++)
+{
+    getline(cin, sentences[i]);
+}
+🔥 Why cin.ignore()?
+
+After:
+
+cin >> n;
+
+the buffer looks like:
+
+5\n
+
+So getline() reads that \n immediately → empty string 😵
+
+👉 cin.ignore() removes that newline.
+
+✅ Alternative (more robust)
+cin.ignore(numeric_limits<streamsize>::max(), '\n');
+
+This clears the entire buffer safely.
+
+🚀 Summary
+Always use cin.ignore() after cin >> n when using getline()
+Store input directly into vector
+
+
+
+how to remove the last character from string in cpp
+
+The most efficient and standard way to remove the last character from a std::string in C++ is by using the pop_back() member function.Always make sure the string is not empty before removing a character to prevent undefined behavior.1. Using pop_back() (Recommended)Introduced in C++11, the std::string::pop_back() function deletes the last character in-place and drops the string length by one. It has O(1) time complexity.cpp#include <iostream>
+#include <string>
+
+int main() {
+    std::string str = "Hello!";
+    
+    if (!str.empty()) {
+        str.pop_back(); // Modifies the original string
+    }
+    
+    std::cout << str; // Output: Hello
+    return 0;
+}
+Use code with caution.2. Using pop_back with std::string_view (C++20 onwards)If you do not want to modify or copy the original data, you can use std::string_view to remove the last character from your perspective window. This performs no allocations.cpp#include <iostream>
+#include <string_view>
+
+int main() {
+    std::string_view str_view = "Hello!";
+    
+    if (!str_view.empty()) {
+        str_view.remove_suffix(1); // Shifts the view boundary back by 1
+    }
+    
+    std::cout << str_view; // Output: Hello
+    return 0;
+}
+Use code with caution.3. Using erase()The std::string::erase() function can remove a single character or a range of characters. You pass it the target index location, which is calculated as size() - 1.cpp#include <iostream>
+#include <string>
+
+int main() {
+    std::string str = "Hello!";
+    
+    if (!str.empty()) {
+        str.erase(str.size() - 1); 
+    }
+    
+    std::cout << str; // Output: Hello
+    return 0;
+}
+Use code with caution.4. Using substr() (To Create a Copy)If you want to keep your original string intact and create an entirely new string instead, utilize std::string::substr().cpp#include <iostream>
+#include <string>
+
+int main() {
+    std::string original = "Hello!";
+    std::string modified = "";
+    
+    if (!original.empty()) {
+        modified = original.substr(0, original.size() - 1);
+    }
+    
+    std::cout << "Original: " << original << "\n"; // Output: Hello!
+    std::cout << "Modified: " << modified;         // Output: Hello
+    return 0;
+}
+Use code with caution.5. Using resize()You can also force the string container to truncate itself down by one element using resize().cpp#include <iostream>
+#include <string>
+
+int main() {
+    std::string str = "Hello!";
+    
+    if (!str.empty()) {
+        str.resize(str.size() - 1);
+    }
+    
+    std::cout << str; // Output: Hello
+    return 0;
+}
