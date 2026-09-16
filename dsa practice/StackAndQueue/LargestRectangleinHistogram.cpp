@@ -142,7 +142,7 @@ int largestRectangleArea(vector<int> &heights, int n)
 // better solution
 // in this we find the previous smaller just before the current and next smaller just after the current by using a monotonic stack
 
-// the intuition behind the approach is the sama as finding the smaller element on both sides but in an optimized way using the concept of the next greater elt and the next smaller elt and formula is  for getting area - (right smaller index- left smaller index+1)*heights[i]
+// the intuition behind the approach is the same as finding the smaller element on both sides but in an optimized way using the concept of the next greater elt and the next smaller elt and formula is  for getting area - (right smaller index- left smaller index+1)*heights[i]
 
 // so here let's create a left array of a size same as given of heights array size and we create a stack and in this stack we store index
 

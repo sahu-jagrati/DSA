@@ -2,6 +2,7 @@
 using namespace std;
 
 // brute force - generate all subarrays
+// it run for 992 case from 999 after that it show time limit exceed
 long long distantSubarrays(vector<int> &nums, int goal, int k)
 {
   int n = nums.size();

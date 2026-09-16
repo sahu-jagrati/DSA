@@ -39,7 +39,7 @@ using namespace std;
 
 // for the third row, The histogram will look like the following: heights=[3,1,3,2,2]
 
-// and for the fourth column, The histogram will look like the following: heights=[4,0,0,3,0].
+// and for the fourth row The histogram will look like the following: heights=[4,0,0,3,0].
 
 // Similarly, following the same process, we can convert every row of any matrix into a histogram. Now, if we pass each histogram(i.e Each row) to the function used in finding the Area of the largest rectangle in Histogram, it will give us the maximum area for each histogram. Among all the answers to the histograms that we get from each row, we will consider the maximum one.
 
