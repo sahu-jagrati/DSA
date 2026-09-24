@@ -42,10 +42,11 @@ vector<int> singleNumber(vector<int> &nums)
 
 // but question say do in linear runtime and constant space
 // we use xor
-// we know - 1. a^a=0 and 2. a^0=a
+// we know : 1) a^a=0 and 2) b^0=b
 // 🧠 Intuition (Very Important)
 // Same numbers cancel out using XOR
-// Only a and b remain → a ^ b
+
+// Only a and b remain → a ^ b where a and b are elt that appears once
 // We find a bit where they differ
 // Split array → now each group has one unique number
 // Works for:
