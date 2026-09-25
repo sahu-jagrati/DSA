@@ -170,8 +170,102 @@ int SingleNumber(vector<int> &nums)
 }
 
 // Optimized solution: using the concepts of buckets
-// it's based on bits and the bits will be taking care of everything technically
+
+// it's based on bits and the bits will be taking care of everything, technically we just think about one or two numbers and  then the solution is expanded to bigger set of numbers because the bits will be taking care of.
+// first of all forget about the array, lets' takes a simple array:
+// nums=[2,2,2,1]
+// What we need? we need the number that appears once.
+
+// so I'll create three buckets:
+// i) ones: here we storing all the numbers which is appearing ones
+// ii) twos: here we storing all the numbers which is appearing twice
+// iii) threes: here we storing all the numbers which is appearing thrice
+
+// we will do some bitwise to storing them
+
+// nums=[2,2,2,1]
+
+// as of now initially what are the buckets storing?
+// ones=0
+// twos=0
+// threes=0
+
+// What we do next?
+// When we'll start traversing:
+// index=0,  we have to figure out where will this 2 go, from the naked eye, I know that this 2 will end up at ones right now but programmatically I don't know where it go out of these three buckets , so we have to figure out a way , can I say:
+
+// i) nums[i] will go to ones if it is not in twos, it cannot be in threes for sure because the number at max will appear thrice so if it isn't three it cannot appear four times
+
+// ii) nums[i] will go to twos if it is in ones
+
+// iii) nums[i] will go to threes if it is in twos, Can I say this if it is in twos then only it will go to threes
+
+// These above are three conditions , now we'll have to convert these into bitwise
+
+// What we do is? We take this index[0], nums[0]=2 and we start thinking of an operation that will add and delete because that is what we need to do ? It will go to ones if it is not in twos, go to ones means add, it will go to twos if it is in ones means it will go to twos means we'll be adding to twos and it'll be deleting in ones, after this nums[i] will go to threes if it is in twos means it will go to threes means we'll be adding to threes and it'll be deleting in twos.
+
+// Do we need to go to threes?
+// There's no significance of threes if we carefully see we decide if it goes to ones on the basis of twos , we decide if it goes to twos on the basis of ones beyond if we don't need threes, we don't need to store threes for the third variable as of now keep in mind that threes will not be needed anyways
+
+// Let's started we have the first elt, nums[0]=2 , the first elt nums[0]=2 has to go to ones
+// What are the operators we know? We know about and(&) operator, or(|) operator, xor(^) operator
+// initially we have :
+
+// ones=0
+// twos=0
+// threes=0
+// we are at nums[0]=2
+// suppose we have an & operator then (0 & 2)=0 so for adding we cannot use & operator for adding operation
+// Can I use a | operator for adding: (0 | 2)=2 , so I can use | operator for adding
+// or can I use an ^ operator for adding: (0^2)=2 , so I can also use a ^ operator for adding
+
+// so either of ^ / | operator we will be using to perform the addition operation
+// we say it will go to ones if it is not in twos
+// So what is the next thing for ones? if it is not in twos
+
+// Let's say we'll be using ^ operator for performing addition operation (for intuition later we discuss) so we have (nums[i]^ones) when we add in ones now what about : if it is not in twos, How do we write if not in twos that's very important? Assume two = 0 and we do kind of a negation like a not operator : ~twos so if twos=0 after ~twos everything will turn out to be 1's if all of them are 0's then they will turn out to be 1's: ~(00000)=11111 by applying not operator and then if we do an & operator between them i.e: ((nums[i]^ones) & (~twos))  what will happen is? it will get into ones if it is not in twos so: (ones^nums[i])(add it in ones) & (~twos)(check it is not in twos, ) then we take & of both , What happend :
+// nums[0]=2 and initially ones=0 and twos=0
+// and ones= (2^0)&(~0)=(2)&(~0)=2
+// so ones=2
+// ones= (nums[i]^ones)&(~twos), Why ~twos because it is add in ones if it is not in twos
+// Imagine if it was in twos , imagine 2 was in twos  so what is 2 in binary? 10 , and when we try to add in ones so what happens: ~twos=(~2), in binary 2=10 and we do ~(10)=01 and assume ones=0 and nums[i]=2 so what will happens? (0^2)&(~2) What will happen is? if it was in twos it should go to threes? so (0^2)&(~2) so in binary if we see : (10)&(01)=0 so technically we don't push it into ones because we know it's already in twos so it's the third occurence, it's a third occurence
+
+// i) so our first condition in bitwise is clear now: (ones^nums[i])&(~twos)
+// Now our question is that Why we don't use | operator instead of ^ operator? let's come to the next index, index=1 and this is 2 i.e nums[1]=2 and ones=2 so if we use the | operator then (ones | nums[1])=(2 | 2)=2 & (~twos)=2 & (~0)= 2 so it never gets deleted means according to ii) condition if it is in ones then it will go in twos but here ones=2 again means it will never deleted that's why we cannot use the | operator so thereby the | operator goes out of the question so we can ^ operator so Can I say I'll again apply the same formula: (ones^nums[i])&(~twos) and here I am saying that nums[i]=2 is not in twos and now twos=0 then we have: (2^2)&(~0)= 0 so eventually get 0 so it is deleted from ones means now ones=0 , remember this it is deleted from ones, so I'm actually deleting it from ones at this point since it is no more than ones means we have ones=0, it has to go into twos
+
+// Now what is the statement for twos? nums[i] will go to twos if it is in ones so for that having it in twos we have to delete it from ones then we add it in twos,it will go to twos if it is in ones means it will go to twos means we'll be adding to twos and it'll be deleting in ones,  if it is not in ones then I put it / I add it to twos  because first it should be deleted from ones then we can add it in twos means : (twos^nums[i])&(~ones) so (two^nums[i])(add it in twos) & (~ones)(delete it from the ones) and we take & of both, I'm checking if it is still there in ones we don't deserve to come to twos because it shouldn't be there in ones now since I'v deleted it that's why this comes in twos , so waht will happen is : twos=0 and nums[i]=2 and ones=0 so: (0^2)&(~0)=2 so now twos=2
+
+// now we move to the next index=2 and nums[2]=2, when we come to this particular 2 What will happen? I will try to make it go over ones which is : (ones^nums[i])&(~twos)=(0^2)&(~2)=0 means it is not in ones then try with twos so we have: (twos^nums[i])&(~ones)=(2^2)&(~0)=0 means it is take it out of twos i.e delete it from twos and we can store it in threes but , Do we need to store in the threes? Why do I need to store it into the threes? I don't need to remember who appears  thrice, I care who is appears once.
+
+// now we move to the next index=3 and nums[3]=1, when we try with ones then we have: (ones^nums[i])&(~twos)=(0^1)&(~0)=1 now in ones we have 1, now if we try to get into the twos what will happen? here twos=0 nums[3]=2 and ones=1 then (twos^nums[i])&(~ones) =(0^2)&(~1)=0 means it will never ever go to twos, it stay in ones and our traversal is finish and we'll find our elt in ones because we want elt that appears ones so it will store in ones so our answer in last is ones.
+
+// You might be thinking that what if we have a lot of numbers and they are not arranged in order because the example we took in that they were arranges so don't worry because everything happens in the bit level it doesnot happens in the number level, it happens at the bit level so when we apply ^ , when we apply & automatically takes care of those bit indexes
+
+// so smaller solution and eventually we can spread it to a bigger one because bit indexes will take care of those bit positions.
+
+// t.c-O(n)
+// s.c-O(1)
+int single_Number(vector<int> &nums)
+{
+  int n = nums.size();
+  // here we storing all the numbers which is appearing ones
+  int ones = 0;
+  // here we storing all the numbers which is appearing twos
+  int twos = 0;
+  // no need to store for thrice because we care only for elt that appears once,  I don't need to remember who appears  thrice, I care who is appears once.
+  // traverse the given arrays
+  for (int i = 0; i < n; i++)
+  {
+    // elt appears in ones , if it is not in twos(so we do ~twos)
+    // and ^ operator performs addition in ones
+    ones = (ones ^ nums[i]) & (~twos);
+    // nums[i] will go to twos if it is in ones so for that having it in twos we have to delete it from ones then we add it in twos so for deleting it from ones we do (~ones) then add it in twos so for adding  ^ operator performs addition in twos
+    twos = (twos ^ nums[i]) & (~ones);
+  }
+  return ones; // number that appear once
+}
 int main()
+
 {
   int n;
   cin >> n;
